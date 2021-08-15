@@ -209,9 +209,9 @@ $ file ./mipsel/lib/libpcap.so.1.10.1
 
 以arm为例，为完成交叉编译，make需要以下三个参数：
 
-- CC=arm-linux-gnueabi-gcc
-- CFLAGS='-I/home/xuanxuan/Desktop/tcpdump/libpcap/arm/include'
-- LDFLAGS='-L/home/xuanxuan/Desktop/tcpdump/libpcap/arm/lib/ -static' 
+- `CC=arm-linux-gnueabi-gcc`
+- `CFLAGS='-I/home/xuanxuan/Desktop/tcpdump/libpcap/arm/include'`
+- `LDFLAGS='-L/home/xuanxuan/Desktop/tcpdump/libpcap/arm/lib/ -static'`
 
 最后编译：
 
