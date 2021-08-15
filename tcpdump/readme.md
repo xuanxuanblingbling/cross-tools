@@ -1,6 +1,8 @@
 #  用忽略configure的方式 交叉编译 静态链接 的 tcpdump
 
+
 > 在开源软件的编译过程中，一般都是先使用configure检查编译环境并生成makefile，然后使用make进行编译。但是对于IoT安全研究来说，经常要遇到两个坎，一个是交叉编译，一个是静态链接。如果是单个c代码文件，类似shellcode或者后门，使用相应的交叉编译工具，在加上 **-static** 参数直接编译就好了，可是对于一个有configure以及makefile的软件，我们该怎么跨过这两个坎呢？一般的交叉编译都是在configure处做一系列的配置，这个配置虽然方便，但却令人困惑，我们配置的那些变量到底在哪生效的呢？如：[交叉编译+静态编译](https://github.com/shownb/shownb.github.com/issues/40)。不过，最终编译还是makefile的事，所以其实可以在某些比较简单的情景下，直接忽略configure。由于[make的命令行参数优先于makefile文件中的变量](https://blog.csdn.net/test1280/article/details/81266207)，所以可直接在make命令后加相应的参数，进而完成交叉编译和静态链接。本篇采用这种奇怪的方法，编译出5种架构（x86_64,arm,aarch64,mips,mipsel）下的静态链接的tcpdump程序。
+
 
 ## 环境准备
 
@@ -77,7 +79,7 @@ $ cd tcpdump-4.99.1/
 $ ./configure 
 $ make
 $ file ./tcpdump
-./tcpdump: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=ba092098ad91f35f34fd8fffbb0be737d4d40c4f, for GNU/Linux 3.2.0, with debug_info, not stripped
+./tcpdump: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked
 ```
 
 如果想编译一个静态链接的tcpdump可以在make时直接加入`LDFLAGS='-static'`参数：
@@ -86,7 +88,7 @@ $ file ./tcpdump
 $ make clean
 $ make LDFLAGS='-static'
 $ file ./tcpdump
-./tcpdump: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, BuildID[sha1]=2005c7569e0585b9abe908d7fcd7a2af61edcedc, for GNU/Linux 3.2.0, with debug_info, not stripped
+./tcpdump: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked,
 ```
 
 测试运行成功：
@@ -184,16 +186,16 @@ $ make clean
 $ cd ../libpcap
 
 $ file ./arm/lib/libpcap.so.1.10.1 
-./arm/lib/libpcap.so.1.10.1: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, BuildID[sha1]=389c7ca4b588fc8fd63b2449e24efe25ec887595, with debug_info, not stripped
+./arm/lib/libpcap.so.1.10.1: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked,
 
 $ file ./aarch64/lib/libpcap.so.1.10.1
-./aarch64/lib/libpcap.so.1.10.1: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, BuildID[sha1]=fabffedac9c884a08d694f0400090593df692333, with debug_info, not stripped
+./aarch64/lib/libpcap.so.1.10.1: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked
 
 $ file ./mips/lib/libpcap.so.1.10.1
-./mips/lib/libpcap.so.1.10.1: ELF 32-bit MSB shared object, MIPS, MIPS32 rel2 version 1 (SYSV), dynamically linked, BuildID[sha1]=7b117cfd177dd759f450149744ef784d3b25313f, with debug_info, not stripped
+./mips/lib/libpcap.so.1.10.1: ELF 32-bit MSB shared object, MIPS, MIPS32 rel2 version 1 (SYSV), dynamically linked
 
 $ file ./mipsel/lib/libpcap.so.1.10.1
-./mipsel/lib/libpcap.so.1.10.1: ELF 32-bit LSB shared object, MIPS, MIPS32 rel2 version 1 (SYSV), dynamically linked, BuildID[sha1]=09204ec7fd3b18dfbbb9a752b24e273b308a5827, with debug_info, not stripped
+./mipsel/lib/libpcap.so.1.10.1: ELF 32-bit LSB shared object, MIPS, MIPS32 rel2 version 1 (SYSV), dynamically linked
 ```
 
 
