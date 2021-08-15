@@ -1,5 +1,6 @@
 #  用忽略configure的方式 交叉编译 静态链接 的 tcpdump
 
+> 在开源软件的编译过程中，一般都是先使用configure检查编译环境并生成makefile，然后使用make进行编译。但是对于IoT安全研究来说，经常要遇到两个坎，一个是交叉编译，一个是静态链接。如果是单个c代码文件，类似shellcode或者后门，使用相应的交叉编译工具，在加上 **-static** 参数直接编译就好了，可是对于一个有configure以及makefile的软件，我们该怎么跨过这两个坎呢？一般的交叉编译都是在configure处做一系列的配置，这个配置虽然方便，但却令人困惑，我们配置的那些变量到底在哪生效的呢？如：[交叉编译+静态编译](https://github.com/shownb/shownb.github.com/issues/40)。不过，最终编译还是makefile的事，所以其实可以在某些比较简单的情景下，直接忽略configure。由于[make的命令行参数优先于makefile文件中的变量](https://blog.csdn.net/test1280/article/details/81266207)，所以可直接在make命令后加相应的参数，进而完成交叉编译和静态链接。本篇采用这种奇怪的方法，编译出5种架构（x86_64,arm,aarch64,mips,mipsel）下的静态链接的tcpdump程序。
 
 ## 环境准备
 
